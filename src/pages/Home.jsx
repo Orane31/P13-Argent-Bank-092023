@@ -1,4 +1,5 @@
 import React from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Feature from '../components/Feature'
 import iconChat from '../assets/icon-chat.png'
 import iconMoney from '../assets/icon-money.png'

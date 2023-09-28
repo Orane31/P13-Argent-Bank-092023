@@ -9,3 +9,4 @@ export default function Feature( { img, title,text }) {
     </div>
   )
 }
+
