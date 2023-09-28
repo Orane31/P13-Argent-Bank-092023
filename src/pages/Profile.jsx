@@ -1,25 +1,25 @@
 import React from 'react'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { Context } from '../context/Context'
+// import { Context } from '../context/Context'
 import UserForm from '../components/UserForm'
 // import { useFetch } from '../services/useFetch'
 import AccountCard from '../components/AccountCard'
 
 export default function Profile() {
 
-    const [newFirstName, setNewFirstName] = useState(null)
-    const [newLastName, setNewLastName] = useState(null)
     const [showUserForm, setShowUserForm] = useState(false)
-    const { userToken, baseURL, isLoggedIn, userData, setUserData } = useContext(Context);
+    const { userToken, baseURL, isLoggedIn, userData, setUserData } = useSelector((state) => state);
+    const [newFirstName, setNewFirstName] = useState(userData.firstName)
+    const [newLastName, setNewLastName] = useState(userData.lastName)
 
     let navigate = useNavigate()
 
     const handleSubmit = async (event) => {
 		event.preventDefault();
-		newName(newFirstName, newLastName);
-		currentUser(userToken);
+		updateName(newFirstName, newLastName);
 		setShowUserForm(false);
 	};
 
@@ -31,23 +31,7 @@ export default function Profile() {
 		}
 	};
 
-	const currentUser = (token) => {
-		axios({
-			method: "POST",
-			url: baseURL + "/user/profile",
-			headers: { Authorization: `Bearer ${token}` },
-		})
-			.then((res) => {
-				setUserData(res.data.body);
-				setNewFirstName(res.data.body.firstName);
-				setNewLastName(res.data.body.lastName);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
-
-	const newName = (firstName, lastName) => {
+	const updateName = (firstName, lastName) => {
 		axios({
 			method: "PUT",
 			url: baseURL + "/user/profile",
@@ -56,9 +40,9 @@ export default function Profile() {
 				firstName: firstName,
 				lastName: lastName,
 			},
-		})
+			})
 			.then((res) => {
-				console.log(res);
+				setUserData(res.data.body);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -69,25 +53,11 @@ export default function Profile() {
         if (!isLoggedIn) {
             navigate("/login")
         }
-        
-    //     const user = (token) => {
-    //         axios({
-    //             method: "POST",
-    //             url: baseURL + "/user/profile",
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         })
-    //         .then((res) => {
-    //             // setFirstName(res.data.body.firstName) 
-    //             // setLastName(res.data.body.lastName)
-    //             setUserData(res.data.body)
-    //         })
-    //         .catch((err) => {
-    //             console.log(err)
-    //         });
-        
-    //     }
-        currentUser(userToken);
     }, []);
+
+	useEffect(() => {
+		console.log(userData)
+	}, [userData])
 
     if (!userData) {
         return null;

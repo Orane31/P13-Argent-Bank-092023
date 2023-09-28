@@ -9,7 +9,7 @@ export default function Login() {
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	let navigate = useNavigate()
-	const { setUserToken, baseURL, isLoggedIn, setIsLoggedIn } = useContext(Context)
+	const { setUserToken, baseURL, isLoggedIn, setIsLoggedIn, userData, setUserData } = useContext(Context)
 
 	useEffect(() => {
 		if (isLoggedIn) {
@@ -24,20 +24,41 @@ export default function Login() {
 		})
 	}
 
+	const getCurrentUser = (token) => {
+		return axios({
+			method: "POST",
+			url: baseURL + "/user/profile",
+			headers: { Authorization: `Bearer ${token}` },
+			})
+			.then((res) => {
+				setUserData(res.data.body);
+
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
     const handleSubmit = async (e) => {   
 		e.preventDefault();
 		await login(email, password)
 			.then((res) => {
-				console.log(res.data.body.token);
 				console.log("ok")
 				setUserToken(res.data.body.token)
+				return res.data.body.token
+			})
+			.then((token) => {
+				getCurrentUser(token)
 				setIsLoggedIn(true)
+
 			})
 			.catch((err) => {
 				console.log(err)
 				setIsLoggedIn(false)
 		});
     }
+
+	// TODO : fetch userdATA after login and update context
 
 	return (
 		<main className="main bg-dark">
