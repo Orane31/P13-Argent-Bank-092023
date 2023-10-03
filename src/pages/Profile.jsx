@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { useContext, useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 // import { Context } from '../context/Context'
 import UserForm from '../components/UserForm'
@@ -11,9 +11,12 @@ import AccountCard from '../components/AccountCard'
 export default function Profile() {
 
     const [showUserForm, setShowUserForm] = useState(false)
+	//  enlever les setters ci dessous
+	//  à chaque setState -> remplacer par dispatch
     const { userToken, baseURL, isLoggedIn, userData, setUserData } = useSelector((state) => state);
     const [newFirstName, setNewFirstName] = useState(userData.firstName)
     const [newLastName, setNewLastName] = useState(userData.lastName)
+	const dispatch = useDispatch()
 
     let navigate = useNavigate()
 
@@ -43,6 +46,7 @@ export default function Profile() {
 			})
 			.then((res) => {
 				setUserData(res.data.body);
+				// dispatch(actio)
 			})
 			.catch((error) => {
 				console.log(error);

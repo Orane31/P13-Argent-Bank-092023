@@ -31,6 +31,7 @@ export default function Login() {
 			headers: { Authorization: `Bearer ${token}` },
 			})
 			.then((res) => {
+				// remplace with : useDispatch ( action success avec res.data.body en param)
 				setUserData(res.data.body);
 
 			})
