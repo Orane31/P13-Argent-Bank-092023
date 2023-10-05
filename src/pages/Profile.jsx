@@ -7,13 +7,17 @@ import { useNavigate } from 'react-router-dom'
 import UserForm from '../components/UserForm'
 // import { useFetch } from '../services/useFetch'
 import AccountCard from '../components/AccountCard'
+import { updateUserDataSuccessCreator } from '../redux/actions'
 
 export default function Profile() {
 
     const [showUserForm, setShowUserForm] = useState(false)
 	//  enlever les setters ci dessous
+
 	//  à chaque setState -> remplacer par dispatch
-    const { userToken, baseURL, isLoggedIn, userData, setUserData } = useSelector((state) => state);
+	const baseURL = "http://localhost:3001/api/v1"
+	const { userToken, isLoggedIn } = useSelector((state) => state.loginStore)
+	const { userData } = useSelector((state) => state.userDataStore)
     const [newFirstName, setNewFirstName] = useState(userData.firstName)
     const [newLastName, setNewLastName] = useState(userData.lastName)
 	const dispatch = useDispatch()
@@ -45,8 +49,9 @@ export default function Profile() {
 			},
 			})
 			.then((res) => {
-				setUserData(res.data.body);
-				// dispatch(actio)
+				// setUserData(res.data.body);
+				dispatch(updateUserDataSuccessCreator(res.data.body))
+				// dispatch(action)
 			})
 			.catch((error) => {
 				console.log(error);
@@ -58,6 +63,7 @@ export default function Profile() {
             navigate("/login")
         }
     }, []);
+
 
 	useEffect(() => {
 		console.log(userData)

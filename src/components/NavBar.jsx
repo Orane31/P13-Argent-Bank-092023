@@ -3,14 +3,17 @@ import { NavLink, Link } from 'react-router-dom'
 import { useContext } from 'react'
 import { Context } from '../context/Context'
 import logo from '../assets/argentBankLogo.png'
+import { useSelector } from 'react-redux'
 
 export default function NavBar() {
 
-    const { isLoggedIn, setIsLoggedIn, userData, setUserData } = useContext(Context)
+	const { userToken, isLoggedIn } = useSelector((state) => state.loginStore)
+	const { userData } = useSelector((state) => state.userDataStore)
 
     const logOut = (e) => {
         e.preventDefault()
-        setIsLoggedIn(false);
+        // setIsLoggedIn(false);
+        // TODO : add funtion logout -> action update state: isloggedin = false
     }
 
     return (

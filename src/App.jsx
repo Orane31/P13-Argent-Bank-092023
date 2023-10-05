@@ -7,10 +7,9 @@ import './main.css'
 function App() {
 	return (
 		<>
-		<Provider store={store}>
-			<Router />
-		</Provider>
-		
+			<Provider store={store}>
+				<Router />
+			</Provider>
 		</>
 	);
 }

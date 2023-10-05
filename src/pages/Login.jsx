@@ -1,21 +1,27 @@
 import React from 'react'
 import axios from 'axios'
 import { useState, useContext, useEffect } from 'react'
-import { Context } from '../context/Context'
+// import { Context } from '../context/Context'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { loginReducer } from '../redux/loginReducer'
+import { fetchUserDataSuccessActionCreator, loginActionFailCreator, loginActionSuccessCreator } from '../redux/actions'
 
 export default function Login() {
 
+	const baseURL = "http://localhost:3001/api/v1"
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	let navigate = useNavigate()
-	const { setUserToken, baseURL, isLoggedIn, setIsLoggedIn, userData, setUserData } = useContext(Context)
+	const { userToken, isLoggedIn } = useSelector((state) => state.loginStore)
+	const { userData } = useSelector((state) => state.userDataStore)
+	const dispatch = useDispatch()
 
 	useEffect(() => {
 		if (isLoggedIn) {
 			navigate("/profile")
 		}
-	}, [isLoggedIn, setIsLoggedIn, navigate])
+	}, [isLoggedIn, navigate])
 
 	const login = (email, password) => {
 		return axios.post(baseURL + "/user/login", {
@@ -32,7 +38,8 @@ export default function Login() {
 			})
 			.then((res) => {
 				// remplace with : useDispatch ( action success avec res.data.body en param)
-				setUserData(res.data.body);
+				dispatch(fetchUserDataSuccessActionCreator(res.data.body))
+				// setUserData(res.data.body);
 
 			})
 			.catch((error) => {
@@ -44,22 +51,23 @@ export default function Login() {
 		e.preventDefault();
 		await login(email, password)
 			.then((res) => {
+				// TODO: remplace with : useDispatch
 				console.log("ok")
-				setUserToken(res.data.body.token)
+				// setUserToken(res.data.body.token)
+				dispatch(loginActionSuccessCreator(res.data.body.token, true))
 				return res.data.body.token
 			})
 			.then((token) => {
 				getCurrentUser(token)
-				setIsLoggedIn(true)
+				// setIsLoggedIn(true)
 
 			})
 			.catch((err) => {
 				console.log(err)
-				setIsLoggedIn(false)
+				dispatch(loginActionFailCreator())
+				// setIsLoggedIn(false)
 		});
     }
-
-	// TODO : fetch userdATA after login and update context
 
 	return (
 		<main className="main bg-dark">
