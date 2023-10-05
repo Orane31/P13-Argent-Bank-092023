@@ -21,6 +21,7 @@ export default function Profile() {
     const [newFirstName, setNewFirstName] = useState(userData.firstName)
     const [newLastName, setNewLastName] = useState(userData.lastName)
 	const dispatch = useDispatch()
+	const tokenLocal = localStorage.getItem('token')
 
     let navigate = useNavigate()
 
@@ -62,12 +63,7 @@ export default function Profile() {
         if (!isLoggedIn) {
             navigate("/login")
         }
-    }, []);
-
-
-	useEffect(() => {
-		console.log(userData)
-	}, [userData])
+    }, [isLoggedIn]);
 
     if (!userData) {
         return null;
@@ -112,18 +108,18 @@ export default function Profile() {
             <h2 className='sr-only'>Accounts</h2>
 
             <AccountCard
-                    title=">Argent Bank Checking (x8349)"
-                    amount="$2,082.79"
+                    title="Argent Bank Checking (x8349)"
+                    amount="2,082.79"
                     description="Available Balance"
                 />
             <AccountCard
                 title="Argent Bank Savings (x6712)"
-                amount="$10,928.42"
+                amount="10,928.42"
                 description="Available Balance"
                 />
             <AccountCard
                 title="Argent Bank Credit Card (x8349)"
-                amount="$184.30"
+                amount="184.30"
                 description="Available Balance"
                 />
         </main>

@@ -1,7 +1,8 @@
 
 export const authActionTypes = {
     LOGIN_SUCCESS: 'LOGIN_SUCCESS',
-    LOGIN_FAIL: 'LOGIN_FAIL'
+    LOGIN_FAIL: 'LOGIN_FAIL',
+    LOGOUT: 'LOGOUT'
 }
 
 export const userActionTypes = {
@@ -11,13 +12,16 @@ export const userActionTypes = {
     UPDATE_USER_DATA_FAIL: 'UPDATE_USER_DATA_FAIL'
 }
 
-export const loginActionSuccessCreator = (userToken, isLoggedIn) => ({
+export const loginActionSuccessCreator = (userToken) => ({
     type: authActionTypes.LOGIN_SUCCESS,
-    payload: { userToken, isLoggedIn },
+    payload: { userToken },
 })
 export const loginActionFailCreator = (error) => ({
     type: authActionTypes.LOGIN_FAIL,
     payload: { error },
+})
+export const logoutActionCreator = () => ({
+    type: authActionTypes.LOGOUT,
 })
 
 export const fetchUserDataSuccessActionCreator = (userData) => ({

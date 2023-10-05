@@ -1,17 +1,18 @@
 import React from 'react'
 import axios from 'axios'
-import { useState, useContext, useEffect } from 'react'
-// import { Context } from '../context/Context'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginReducer } from '../redux/loginReducer'
 import { fetchUserDataSuccessActionCreator, loginActionFailCreator, loginActionSuccessCreator } from '../redux/actions'
+import { getCurrentUser } from '../utils/getCurrentUser'
 
 export default function Login() {
 
 	const baseURL = "http://localhost:3001/api/v1"
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
+	const [remember, setRemember] = useState(false)
 	let navigate = useNavigate()
 	const { userToken, isLoggedIn } = useSelector((state) => state.loginStore)
 	const { userData } = useSelector((state) => state.userDataStore)
@@ -19,9 +20,11 @@ export default function Login() {
 
 	useEffect(() => {
 		if (isLoggedIn) {
+			// console.log(tokenLocal)
 			navigate("/profile")
-		}
+		}	
 	}, [isLoggedIn, navigate])
+
 
 	const login = (email, password) => {
 		return axios.post(baseURL + "/user/login", {
@@ -30,35 +33,42 @@ export default function Login() {
 		})
 	}
 
-	const getCurrentUser = (token) => {
-		return axios({
-			method: "POST",
-			url: baseURL + "/user/profile",
-			headers: { Authorization: `Bearer ${token}` },
-			})
-			.then((res) => {
-				// remplace with : useDispatch ( action success avec res.data.body en param)
-				dispatch(fetchUserDataSuccessActionCreator(res.data.body))
-				// setUserData(res.data.body);
+	// const getCurrentUser = (token) => {
+	// 	return axios({
+	// 		method: "POST",
+	// 		url: baseURL + "/user/profile",
+	// 		headers: { Authorization: `Bearer ${token}` },
+	// 		})
+	// 		.then((res) => {
+	// 			// remplace with : useDispatch ( action success avec res.data.body en param)
+	// 			dispatch(fetchUserDataSuccessActionCreator(res.data.body))
+	// 			// setUserData(res.data.body);
 
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		});
+	// };
+
+	const handleRemember = () => {
+		setRemember(!remember)
+	}
 
     const handleSubmit = async (e) => {   
 		e.preventDefault();
+		remember ? localStorage.setItem('email', email) : localStorage.removeItem('email')
 		await login(email, password)
 			.then((res) => {
 				// TODO: remplace with : useDispatch
 				console.log("ok")
 				// setUserToken(res.data.body.token)
-				dispatch(loginActionSuccessCreator(res.data.body.token, true))
+				localStorage.setItem('token', res.data.body.token)
+				dispatch(loginActionSuccessCreator(res.data.body.token))
 				return res.data.body.token
 			})
-			.then((token) => {
-				getCurrentUser(token)
+			.then(async (token) => {
+				let userInfos = await getCurrentUser(token)
+				dispatch(fetchUserDataSuccessActionCreator(userInfos))
 				// setIsLoggedIn(true)
 
 			})
@@ -85,17 +95,12 @@ export default function Login() {
 					<input type="password" id="password" onChange={(e) => setPassword(e.target.value)} />
 				</div>
 				<div className="input-remember">
-					<input type="checkbox" id="remember-me" />
+					<input type="checkbox" id="remember-me" checked={remember} onChange={handleRemember} />
 					<label htmlFor="remember-me">Remember me</label>
 				</div>
 				<button type='submit' className='sign-in-button'>
 					Sign in
 				</button>
-				{/* <!-- PLACEHOLDER DUE TO STATIC SITE -->
-				<a href="./user.html" className="sign-in-button">Sign In</a>
-				<!-- SHOULD BE THE BUTTON BELOW -->
-				<!-- <button className="sign-in-button">Sign In</button> -->
-				<!--  --> */}
 				</form>
 			</section>
 		</main>

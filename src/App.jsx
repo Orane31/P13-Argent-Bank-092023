@@ -4,6 +4,7 @@ import { store } from './store/Store'
 import './App.css'
 import './main.css'
 
+
 function App() {
 	return (
 		<>

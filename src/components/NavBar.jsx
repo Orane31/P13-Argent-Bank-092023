@@ -1,20 +1,24 @@
 import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { useContext } from 'react'
-import { Context } from '../context/Context'
 import logo from '../assets/argentBankLogo.png'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { logoutActionCreator } from '../redux/actions'
 
 export default function NavBar() {
 
 	const { userToken, isLoggedIn } = useSelector((state) => state.loginStore)
 	const { userData } = useSelector((state) => state.userDataStore)
+    const dispatch = useDispatch()
 
     const logOut = (e) => {
         e.preventDefault()
+        dispatch(logoutActionCreator())
+        localStorage.removeItem('token')
         // setIsLoggedIn(false);
         // TODO : add funtion logout -> action update state: isloggedin = false
+        // localStorage.setItem()
     }
+
 
     return (
         <nav className='main-nav'>
@@ -42,9 +46,6 @@ export default function NavBar() {
                         Sign out
                     </NavLink>
                 }
-                
-                
-
             </div>
         </nav>
     )

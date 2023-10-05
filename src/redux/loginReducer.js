@@ -20,6 +20,12 @@ export const loginReducer = (state = initialState, action) => {
                 isLoggedIn:false,
                 error: action.payload.error
             }
+        case authActionTypes.LOGOUT:
+            return {
+                ...state,
+                userToken: null,
+                isLoggedIn: false
+            }
         default:
             return state
     }
